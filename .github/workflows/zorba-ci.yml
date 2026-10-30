@@ -1,0 +1,76 @@
+# CI for the zorba-processor fork of Xerces-C (branch zorba-patches).
+# Builds with CMake and runs the full ctest suite, then shows that the
+# W3C QT3 schema prod/SchemaImport/unionListDefined.xsd loads with schema
+# full checking. The "stock" job checks that the same QT3 schema and the
+# DOMCount4 regression data are rejected by unpatched Xerces-C 3.3.0.
+name: zorba-ci
+
+on:
+  push:
+    branches: [zorba-patches, fix-union-substitutable]
+    tags: ['v*-zorba.*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  # w3c/qt3tests commit used by Zorba's QT3 workflow.
+  QT3_COMMIT: 201a6e466940cdfc727f4babfedcde5332b9f578
+
+jobs:
+  patched:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends ninja-build libicu-dev libcurl4-openssl-dev
+      - name: Configure
+        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -Dtranscoder=icu -Dnetwork-accessor=curl
+      - name: Build
+        run: cmake --build build
+      - name: Test
+        run: ctest --test-dir build --output-on-failure -j "$(nproc)"
+      - name: QT3 unionListDefined.xsd loads
+        run: |
+          mkdir qt3 && cd qt3
+          curl -fsSLo unionListDefined.xsd \
+            "https://raw.githubusercontent.com/w3c/qt3tests/${QT3_COMMIT}/prod/SchemaImport/unionListDefined.xsd"
+          printf '%s\n' '<?xml version="1.0"?>' \
+            '<s:elementContainingRestrictedDate xmlns:s="http://www.w3.org/XQueryTest/unionListDefined" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/XQueryTest/unionListDefined unionListDefined.xsd"><s:e>2024-02-29</s:e></s:elementContainingRestrictedDate>' \
+            > instance.xml
+          ../build/samples/DOMCount -n -s -f instance.xml 2>&1 | tee out.txt
+          ! grep -qi "error" out.txt
+
+  stock:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: v3.3.0
+          path: stock
+      - uses: actions/checkout@v7
+        with:
+          path: patched
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends ninja-build libicu-dev
+      - name: Build stock 3.3.0
+        run: |
+          cmake -S stock -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -Dtranscoder=icu -Dnetwork-accessor=socket
+          cmake --build build --target DOMCount
+      - name: Stock 3.3.0 rejects the regression data and the QT3 schema
+        run: |
+          cd patched/samples/data
+          { ../../../build/samples/DOMCount -n -s -f union-restriction.xml 2>&1 || true; } | tee ../../../stock-regression.txt
+          grep -q "does not derive from type of corresponding element in the base" ../../../stock-regression.txt
+          cd "$GITHUB_WORKSPACE" && mkdir qt3 && cd qt3
+          curl -fsSLo unionListDefined.xsd \
+            "https://raw.githubusercontent.com/w3c/qt3tests/${QT3_COMMIT}/prod/SchemaImport/unionListDefined.xsd"
+          printf '%s\n' '<?xml version="1.0"?>' \
+            '<s:elementContainingRestrictedDate xmlns:s="http://www.w3.org/XQueryTest/unionListDefined" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/XQueryTest/unionListDefined unionListDefined.xsd"><s:e>2024-02-29</s:e></s:elementContainingRestrictedDate>' \
+            > instance.xml
+          { ../build/samples/DOMCount -n -s -f instance.xml 2>&1 || true; } | tee out.txt
+          grep -q "does not derive from type of corresponding element in the base" out.txt
