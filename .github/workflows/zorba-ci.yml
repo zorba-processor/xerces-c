@@ -1,7 +1,9 @@
 # CI for the zorba-processor fork of Xerces-C (branch zorba-patches).
 # Builds with CMake and runs the full ctest suite, then shows that the
 # W3C QT3 schema prod/SchemaImport/unionListDefined.xsd loads with schema
-# full checking. The "stock" job checks that the same QT3 schema and the
+# full checking. The "arch" job builds and tests against the newest
+# toolchain and ICU (Arch Linux, as in Zorba's builder-latest image). The
+# "stock" job checks that the same QT3 schema and the
 # DOMCount4 regression data are rejected by unpatched Xerces-C 3.3.0.
 name: zorba-ci
 
@@ -43,6 +45,21 @@ jobs:
             > instance.xml
           ../build/samples/DOMCount -n -s -f instance.xml 2>&1 | tee out.txt
           ! grep -qi "error" out.txt
+
+  arch:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    container: archlinux:base
+    steps:
+      - name: Install dependencies
+        run: pacman -Syu --noconfirm --needed base-devel cmake ninja git icu curl
+      - uses: actions/checkout@v7
+      - name: Configure
+        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -Dtranscoder=icu -Dnetwork-accessor=curl
+      - name: Build
+        run: cmake --build build
+      - name: Test
+        run: ctest --test-dir build --output-on-failure -j "$(nproc)"
 
   stock:
     runs-on: ubuntu-24.04
