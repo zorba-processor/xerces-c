@@ -26,12 +26,64 @@
 #include <xercesc/validators/datatype/InvalidDatatypeFacetException.hpp>
 #include <xercesc/validators/datatype/InvalidDatatypeValueException.hpp>
 #include <xercesc/util/OutOfMemoryException.hpp>
+#include <xercesc/util/XMLString.hpp>
 
 #include <xercesc/internal/XTemplateSerializer.hpp>
 
 XERCES_CPP_NAMESPACE_BEGIN
 
 static const unsigned int BUF_LEN = 64;
+
+namespace {
+
+// A union has no whiteSpace facet of its own (XML Schema 1.0 Part 2, 4.3.6):
+// each member type normalizes the value with its own facet when it is
+// tried. The union reports PRESERVE so that callers pass the value
+// unnormalized, and MemberValue applies the member's facet.
+class MemberValue
+{
+public:
+    MemberValue(const DatatypeValidator* const member
+              , const XMLCh*             const value
+              , MemoryManager*           const manager)
+    : fValue(value)
+    , fCopy(0)
+    , fMemoryManager(manager)
+    {
+        const short wsFacet = member->getWSFacet();
+        if ((wsFacet == DatatypeValidator::REPLACE && !XMLString::isWSReplaced(value)) ||
+            (wsFacet == DatatypeValidator::COLLAPSE && !XMLString::isWSCollapsed(value)))
+        {
+            fCopy = XMLString::replicate(value, fMemoryManager);
+            if (wsFacet == DatatypeValidator::REPLACE)
+                XMLString::replaceWS(fCopy, fMemoryManager);
+            else
+                XMLString::collapseWS(fCopy, fMemoryManager);
+            fValue = fCopy;
+        }
+    }
+
+    ~MemberValue()
+    {
+        if (fCopy)
+            fMemoryManager->deallocate(fCopy);
+    }
+
+    const XMLCh* get() const
+    {
+        return fValue;
+    }
+
+private:
+    MemberValue(const MemberValue&);
+    MemberValue& operator=(const MemberValue&);
+
+    const XMLCh*   fValue;
+    XMLCh*         fCopy;
+    MemoryManager* fMemoryManager;
+};
+
+}
 
 // ---------------------------------------------------------------------------
 //  Constructors and Destructor
@@ -43,7 +95,9 @@ UnionDatatypeValidator::UnionDatatypeValidator(MemoryManager* const manager)
 ,fEnumeration(0)
 ,fMemberTypeValidators(0)
 
-{}
+{
+    setWhiteSpace(DatatypeValidator::PRESERVE);
+}
 
 UnionDatatypeValidator::~UnionDatatypeValidator()
 {
@@ -68,6 +122,7 @@ UnionDatatypeValidator::UnionDatatypeValidator(
 
     // no pattern, no enumeration
     fMemberTypeValidators = memberTypeValidators;
+    setWhiteSpace(DatatypeValidator::PRESERVE);
 }
 
 typedef JanitorMemFunCall<UnionDatatypeValidator>   CleanupType;
@@ -107,6 +162,8 @@ UnionDatatypeValidator::UnionDatatypeValidator(
                 , value1
                 , manager);
     }
+
+    setWhiteSpace(DatatypeValidator::PRESERVE);
 
     CleanupType cleanup(this, &UnionDatatypeValidator::cleanUp);
 
@@ -254,7 +311,8 @@ void UnionDatatypeValidator::checkContent(const XMLCh*             const content
 
             try
             {
-                fMemberTypeValidators->elementAt(i)->validate(content, context, manager);
+                MemberValue memberContent(fMemberTypeValidators->elementAt(i), content, manager);
+                fMemberTypeValidators->elementAt(i)->validate(memberContent.get(), context, manager);
                 memTypeValid = true;
                 
                 //set the validator of the type actually used to validate the content
@@ -315,7 +373,9 @@ void UnionDatatypeValidator::checkContent(const XMLCh*             const content
             {
                 try
                 {
-                    if (memberDTV->elementAt(memberIndex)->compare(content, tmpEnum->elementAt(enumIndex), manager) == 0)
+                    MemberValue memberContent(memberDTV->elementAt(memberIndex), content, manager);
+                    MemberValue memberEnum(memberDTV->elementAt(memberIndex), tmpEnum->elementAt(enumIndex), manager);
+                    if (memberDTV->elementAt(memberIndex)->compare(memberContent.get(), memberEnum.get(), manager) == 0)
                         return;
                 }
                 catch (XMLException&)
@@ -347,9 +407,11 @@ int UnionDatatypeValidator::compare(const XMLCh* const lValue
         // return -1; so attempt to validate both values to get the right validator
         try
         {
-            memberDTV->elementAt(memberIndex)->validate(lValue, 0, manager);                       
-            memberDTV->elementAt(memberIndex)->validate(rValue, 0, manager);                       
-            if (memberDTV->elementAt(memberIndex)->compare(lValue, rValue, manager) ==0)
+            MemberValue memberL(memberDTV->elementAt(memberIndex), lValue, manager);
+            MemberValue memberR(memberDTV->elementAt(memberIndex), rValue, manager);
+            memberDTV->elementAt(memberIndex)->validate(memberL.get(), 0, manager);
+            memberDTV->elementAt(memberIndex)->validate(memberR.get(), 0, manager);
+            if (memberDTV->elementAt(memberIndex)->compare(memberL.get(), memberR.get(), manager) ==0)
                 return  0;
         }
         catch (XMLException&)
@@ -407,8 +469,9 @@ const XMLCh* UnionDatatypeValidator::getCanonicalRepresentation(const XMLCh*    
     {
         try
         {
-            temp->fMemberTypeValidators->elementAt(i)->validate(rawData, 0, toUse);                       
-            return temp->fMemberTypeValidators->elementAt(i)->getCanonicalRepresentation(rawData, toUse, false);
+            MemberValue memberData(temp->fMemberTypeValidators->elementAt(i), rawData, toUse);
+            temp->fMemberTypeValidators->elementAt(i)->validate(memberData.get(), 0, toUse);
+            return temp->fMemberTypeValidators->elementAt(i)->getCanonicalRepresentation(memberData.get(), toUse, false);
         }
         catch (XMLException&)
         {
