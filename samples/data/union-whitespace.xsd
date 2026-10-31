@@ -7,16 +7,16 @@
   Used by sample test StdInParse7 together with union-whitespace.xml.
 -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <!-- exactly three characters, whitespace preserved -->
-  <xs:simpleType name="three">
-    <xs:restriction base="xs:string"><xs:length value="3"/></xs:restriction>
+  <!-- exactly four characters, whitespace preserved -->
+  <xs:simpleType name="four">
+    <xs:restriction base="xs:string"><xs:length value="4"/></xs:restriction>
   </xs:simpleType>
   <!-- 'a', a tab, 'b' -->
   <xs:simpleType name="aTabB">
     <xs:restriction base="xs:string"><xs:pattern value="a\tb"/></xs:restriction>
   </xs:simpleType>
   <xs:simpleType name="u">
-    <xs:union memberTypes="three aTabB xs:integer"/>
+    <xs:union memberTypes="four aTabB xs:integer"/>
   </xs:simpleType>
   <xs:element name="values">
     <xs:complexType>
