@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<values xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="nan-facets.xsd">
+<dMinIncl>1</dMinIncl>
+<dMaxIncl>10</dMaxIncl>
+<dMinExcl>2</dMinExcl>
+<dMaxExcl>9</dMaxExcl>
+<fMinIncl>1</fMinIncl>
+<fMaxIncl>10</fMaxIncl>
+<fMinExcl>2</fMinExcl>
+<fMaxExcl>9</fMaxExcl>
+<dMinIncl>NaN</dMinIncl>
+<dMaxIncl>NaN</dMaxIncl>
+<dMinExcl>NaN</dMinExcl>
+<dMaxExcl>NaN</dMaxExcl>
+<fMinIncl>NaN</fMinIncl>
+<fMaxIncl>NaN</fMaxIncl>
+<fMinExcl>NaN</fMinExcl>
+<fMaxExcl>NaN</fMaxExcl>
+</values>
