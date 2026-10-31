@@ -1,0 +1,6 @@
+
+Error at (file stdin, line 10, char 17): value 'abc' has length '3' which is not equal to length facet value '2'
+
+Error at (file stdin, line 11, char 15): value 'a' has length '1' which is less than minLength facet value '2'
+
+Error at (file stdin, line 12, char 17): value 'abc' has length '3' which exceeds maxLength facet value '2'
