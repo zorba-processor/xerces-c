@@ -31,6 +31,8 @@ EXTRA_DIST =                        CMakeLists.txt \
                                     data/personal.xml \
                                     data/personal.xsd \
                                     data/personal-schema.xml \
+                                    data/nan-facets.xml \
+                                    data/nan-facets.xsd \
                                     data/redirect.dtd \
                                     data/long.xml \
                                     expected \
@@ -162,6 +164,7 @@ TESTS =					scripts/SAXCount \
 					scripts/StdInParse1 \
 					scripts/StdInParse2 \
 					scripts/StdInParse3 \
+					scripts/StdInParse4 \
 					scripts/PParse \
 					scripts/PParse1 \
 					scripts/PParse2 \
@@ -181,4 +184,5 @@ XFAIL_TESTS =				scripts/SAXCount \
 					scripts/DOMPrint \
 					scripts/PParse \
 					scripts/EnumVal \
-					scripts/SEnumVal
+					scripts/SEnumVal \
+					scripts/StdInParse4

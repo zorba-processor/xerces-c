@@ -35,6 +35,8 @@ set(EXTRA_DIST
   data/personal.xml
   data/personal.xsd
   data/personal-schema.xml
+  data/nan-facets.xml
+  data/nan-facets.xsd
   data/redirect.dtd
   data/long.xml
   )
@@ -190,6 +192,7 @@ add_xerces_sample_test(DOMPrint5         COMMAND DOMPrint -v=never -xpath=//name
 add_xerces_sample_test(StdInParse1       COMMAND StdInParse STDIN personal.xml)
 add_xerces_sample_test(StdInParse2       COMMAND StdInParse -v=never STDIN personal.xml)
 add_xerces_sample_test(StdInParse3       COMMAND StdInParse STDIN personal-schema.xml)
+add_xerces_sample_test(StdInParse4       COMMAND StdInParse -n -s STDIN nan-facets.xml EXPECT_FAIL)
 add_xerces_sample_test(PParse            COMMAND PParse EXPECT_FAIL)
 add_xerces_sample_test(PParse1           COMMAND PParse       personal.xml)
 add_xerces_sample_test(PParse2           COMMAND PParse -n -s personal-schema.xml)
