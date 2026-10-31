@@ -1,0 +1,2 @@
+
+Error at (file stdin, line 12, char 5): empty content is not valid for content model '(foo)'

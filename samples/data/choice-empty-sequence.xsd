@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  A choice with a <sequence/> branch that has no particles accepts empty
+  content: the empty sequence is a valid match for that branch (XML Schema
+  1.0 Part 1, 3.8.4 and 3.9.4). A sequence with maxOccurs="0" is not a
+  branch at all. Used by sample test StdInParse6 with choice-empty-sequence.xml.
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <!-- (foo | ()) -->
+  <xs:complexType name="fooOrEmpty">
+    <xs:choice>
+      <xs:element name="foo"/>
+      <xs:sequence/>
+    </xs:choice>
+  </xs:complexType>
+  <!-- (() | foo) -->
+  <xs:complexType name="emptyOrFoo">
+    <xs:choice>
+      <xs:sequence/>
+      <xs:element name="foo"/>
+    </xs:choice>
+  </xs:complexType>
+  <!-- (foo | bar | ()){2} -->
+  <xs:complexType name="twoOfFooBarOrEmpty">
+    <xs:choice minOccurs="2" maxOccurs="2">
+      <xs:element name="foo"/>
+      <xs:element name="bar"/>
+      <xs:sequence/>
+    </xs:choice>
+  </xs:complexType>
+  <!-- (foo); the sequence with maxOccurs="0" is not a branch -->
+  <xs:complexType name="fooOnly">
+    <xs:choice>
+      <xs:element name="foo"/>
+      <xs:sequence minOccurs="0" maxOccurs="0"/>
+    </xs:choice>
+  </xs:complexType>
+  <xs:element name="values">
+    <xs:complexType>
+      <xs:choice maxOccurs="unbounded">
+        <xs:element name="a" type="fooOrEmpty"/>
+        <xs:element name="b" type="emptyOrFoo"/>
+        <xs:element name="c" type="twoOfFooBarOrEmpty"/>
+        <xs:element name="d" type="fooOnly"/>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

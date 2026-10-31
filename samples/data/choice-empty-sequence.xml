@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<values xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="choice-empty-sequence.xsd">
+<a/>
+<a><foo/></a>
+<b/>
+<b><foo/></b>
+<c/>
+<c><bar/></c>
+<c><foo/><bar/></c>
+<d><foo/></d>
+<d/>
+</values>
