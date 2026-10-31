@@ -716,7 +716,18 @@ void AbstractStringValidator::assignAdditionalFacet( const XMLCh* const key
 XMLSize_t AbstractStringValidator::getLength(const XMLCh* const content
                                            , MemoryManager* const) const
 {
-    return XMLString::stringLen(content);
+    // XML Schema measures the length of a string in characters, so a
+    // surrogate pair (one supplementary character) counts as one.
+    XMLSize_t length = 0;
+    if (content)
+    {
+        for (const XMLCh* p = content; *p; ++p, ++length)
+        {
+            if (*p >= 0xD800 && *p <= 0xDBFF && p[1] >= 0xDC00 && p[1] <= 0xDFFF)
+                ++p;
+        }
+    }
+    return length;
 }
 
 /***
