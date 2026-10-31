@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<values xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="length-facets.xsd">
+<len2>&#x1F600;&#x1F600;</len2>
+<len2>a&#x10000;</len2>
+<min2>&#x1F600;&#x1F600;</min2>
+<min2>&#xE9;&#x10FFFD;</min2>
+<max2>&#x1F600;&#x1F600;</max2>
+<max2>&#x1F600;</max2>
+<len2>abc</len2>
+<min2>a</min2>
+<max2>abc</max2>
+</values>

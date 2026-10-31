@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  XML Schema measures the length of a string value in characters (XML
+  Schema 1.0 Part 2, 4.3.1-4.3.3), so a supplementary character, which is
+  one character but a surrogate pair in UTF-16, has length 1.
+  Used by sample test StdInParse5 together with length-facets.xml.
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:simpleType name="length2">
+    <xs:restriction base="xs:string"><xs:length value="2"/></xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="minLength2">
+    <xs:restriction base="xs:string"><xs:minLength value="2"/></xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="maxLength2">
+    <xs:restriction base="xs:string"><xs:maxLength value="2"/></xs:restriction>
+  </xs:simpleType>
+  <xs:element name="values">
+    <xs:complexType>
+      <xs:choice maxOccurs="unbounded">
+        <xs:element name="len2" type="length2"/>
+        <xs:element name="min2" type="minLength2"/>
+        <xs:element name="max2" type="maxLength2"/>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
