@@ -1055,6 +1055,9 @@ TraverseSchema::traverseChoiceSequence(const DOMElement* const elem,
     Janitor<ContentSpecNode>    right(0);
 
     bool hadContent = false;
+    // A <sequence> branch without particles has no ContentSpecNode, but it
+    // matches the empty sequence, so a choice with such a branch is emptiable.
+    bool hadEmptyBranch = false;
 
     Janitor<ContentSpecNode> contentSpecNode(0);
     for (; child != 0; child = XUtil::getNextSiblingElement(child)) {
@@ -1110,6 +1113,16 @@ TraverseSchema::traverseChoiceSequence(const DOMElement* const elem,
             bool hasChild;
             contentSpecNode.reset(traverseChoiceSequence(child,ContentSpecNode::Sequence, hasChild));
             seeParticle = true;
+
+            if (!contentSpecNode.get() && modelGroupType == ContentSpecNode::Choice) {
+                // Check the occurrence range here: a sequence with
+                // maxOccurs="0" is not a branch of the choice at all.
+                ContentSpecNode occurrence(fGrammarPoolMemoryManager);
+                checkMinMax(&occurrence, child, Not_All_Context);
+                if (occurrence.getMaxOccurs() != 0)
+                    hadEmptyBranch = true;
+                seeParticle = false;
+            }
         }
         else if (XMLString::equals(childName, SchemaSymbols::fgELT_ANY)) {
 
@@ -1160,6 +1173,30 @@ TraverseSchema::traverseChoiceSequence(const DOMElement* const elem,
         }
     }
     contentSpecNode.release();
+
+    if (hadContent && hadEmptyBranch)
+    {
+        // (p1 | ... | pn | ()) accepts the same sequences as (p1 | ... | pn)?,
+        // also when repeated: put the branches under a choice with minOccurs
+        // 0 inside the model group node built below, which keeps the group's
+        // own occurrence range.
+        ContentSpecNode* optional =
+               new (fGrammarPoolMemoryManager) ContentSpecNode
+        (
+            ContentSpecNode::Choice
+            , left.get()
+            , right.get()
+            , true
+            , true
+            , fGrammarPoolMemoryManager
+        );
+
+        left.release();
+        right.release();
+
+        optional->setMinOccurs(0);
+        left.reset(optional);
+    }
 
     if (hadContent)
     {
