@@ -1,0 +1,4 @@
+
+Error at (file stdin, line 11, char 10): value 'ab' does not match any member types of the union
+
+Error at (file stdin, line 12, char 14): value 'ab' does not match any member types of the union

@@ -1,0 +1,7 @@
+#!/bin/sh
+
+set -e
+
+. ../scripts/run-test
+
+run_test StdInParse7 fail union-whitespace.xml samples/StdInParse -n -s

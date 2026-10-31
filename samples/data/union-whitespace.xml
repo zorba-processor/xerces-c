@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<values xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="union-whitespace.xsd">
+<e>a  </e>
+<e>  a</e>
+<e>a&#9;b</e>
+<e> 12 </e>
+<att v="a  "/>
+<att v="a&#9;b"/>
+<att v=" 12 "/>
+<e>ab</e>
+<att v="ab"/>
+</values>
