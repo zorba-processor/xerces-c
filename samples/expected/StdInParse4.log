@@ -1,0 +1,16 @@
+
+Error at (file stdin, line 12, char 25): value 'NaN' must be greater than or equal to minInclusive facet value '1'
+
+Error at (file stdin, line 13, char 25): value 'NaN' must be less than or equal to maxInclusive facet value '10'
+
+Error at (file stdin, line 14, char 25): value 'NaN' must be greater than or equal to minExclusive facet value '1'
+
+Error at (file stdin, line 15, char 25): value 'NaN' must be less than maxExclusive facet value '10'
+
+Error at (file stdin, line 16, char 25): value 'NaN' must be greater than or equal to minInclusive facet value '1'
+
+Error at (file stdin, line 17, char 25): value 'NaN' must be less than or equal to maxInclusive facet value '10'
+
+Error at (file stdin, line 18, char 25): value 'NaN' must be greater than or equal to minExclusive facet value '1'
+
+Error at (file stdin, line 19, char 25): value 'NaN' must be less than maxExclusive facet value '10'

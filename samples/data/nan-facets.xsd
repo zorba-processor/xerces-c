@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  NaN is incomparable with every other value, so it must fail every
+  bounds facet (XML Schema 1.0 Part 2, 4.3.7-4.3.10 and 3.2.4.1/3.2.5.1).
+  Used by sample test StdInParse4 together with nan-facets.xml.
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:simpleType name="doubleMinInclusive">
+    <xs:restriction base="xs:double"><xs:minInclusive value="1"/></xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="doubleMaxInclusive">
+    <xs:restriction base="xs:double"><xs:maxInclusive value="10"/></xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="doubleMinExclusive">
+    <xs:restriction base="xs:double"><xs:minExclusive value="1"/></xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="doubleMaxExclusive">
+    <xs:restriction base="xs:double"><xs:maxExclusive value="10"/></xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="floatMinInclusive">
+    <xs:restriction base="xs:float"><xs:minInclusive value="1"/></xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="floatMaxInclusive">
+    <xs:restriction base="xs:float"><xs:maxInclusive value="10"/></xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="floatMinExclusive">
+    <xs:restriction base="xs:float"><xs:minExclusive value="1"/></xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="floatMaxExclusive">
+    <xs:restriction base="xs:float"><xs:maxExclusive value="10"/></xs:restriction>
+  </xs:simpleType>
+  <xs:element name="values">
+    <xs:complexType>
+      <xs:choice maxOccurs="unbounded">
+        <xs:element name="dMinIncl" type="doubleMinInclusive"/>
+        <xs:element name="dMaxIncl" type="doubleMaxInclusive"/>
+        <xs:element name="dMinExcl" type="doubleMinExclusive"/>
+        <xs:element name="dMaxExcl" type="doubleMaxExclusive"/>
+        <xs:element name="fMinIncl" type="floatMinInclusive"/>
+        <xs:element name="fMaxIncl" type="floatMaxInclusive"/>
+        <xs:element name="fMinExcl" type="floatMinExclusive"/>
+        <xs:element name="fMaxExcl" type="floatMaxExclusive"/>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
