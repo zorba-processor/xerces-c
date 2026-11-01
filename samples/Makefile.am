@@ -39,6 +39,8 @@ EXTRA_DIST =                        CMakeLists.txt \
                                     data/length-facets.xsd \
                                     data/choice-empty-sequence.xml \
                                     data/choice-empty-sequence.xsd \
+                                    data/union-whitespace.xml \
+                                    data/union-whitespace.xsd \
                                     data/redirect.dtd \
                                     data/long.xml \
                                     expected \
@@ -174,6 +176,7 @@ TESTS =					scripts/SAXCount \
 					scripts/StdInParse4 \
 					scripts/StdInParse5 \
 					scripts/StdInParse6 \
+					scripts/StdInParse7 \
 					scripts/PParse \
 					scripts/PParse1 \
 					scripts/PParse2 \
@@ -196,4 +199,5 @@ XFAIL_TESTS =				scripts/SAXCount \
 					scripts/SEnumVal \
 					scripts/StdInParse4 \
 					scripts/StdInParse5 \
-					scripts/StdInParse6
+					scripts/StdInParse6 \
+					scripts/StdInParse7

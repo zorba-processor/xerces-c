@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  A union has no whiteSpace facet of its own: each member type normalizes
+  the value with its own whiteSpace facet when it is tried (XML Schema 1.0
+  Part 2, 4.3.6). A member derived from xs:string keeps tabs, newlines and
+  runs of spaces; an xs:integer member still collapses them.
+  Used by sample test StdInParse7 together with union-whitespace.xml.
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <!-- exactly four characters, whitespace preserved -->
+  <xs:simpleType name="four">
+    <xs:restriction base="xs:string"><xs:length value="4"/></xs:restriction>
+  </xs:simpleType>
+  <!-- 'a', a tab, 'b' -->
+  <xs:simpleType name="aTabB">
+    <xs:restriction base="xs:string"><xs:pattern value="a\tb"/></xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="u">
+    <xs:union memberTypes="four aTabB xs:integer"/>
+  </xs:simpleType>
+  <xs:element name="values">
+    <xs:complexType>
+      <xs:choice maxOccurs="unbounded">
+        <xs:element name="e" type="u"/>
+        <xs:element name="att">
+          <xs:complexType><xs:attribute name="v" type="u"/></xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
