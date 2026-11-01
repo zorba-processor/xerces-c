@@ -37,6 +37,8 @@ EXTRA_DIST =                        CMakeLists.txt \
                                     data/nan-facets.xsd \
                                     data/length-facets.xml \
                                     data/length-facets.xsd \
+                                    data/choice-empty-sequence.xml \
+                                    data/choice-empty-sequence.xsd \
                                     data/union-whitespace.xml \
                                     data/union-whitespace.xsd \
                                     data/redirect.dtd \
@@ -173,6 +175,7 @@ TESTS =					scripts/SAXCount \
 					scripts/StdInParse3 \
 					scripts/StdInParse4 \
 					scripts/StdInParse5 \
+					scripts/StdInParse6 \
 					scripts/StdInParse7 \
 					scripts/PParse \
 					scripts/PParse1 \
@@ -196,4 +199,5 @@ XFAIL_TESTS =				scripts/SAXCount \
 					scripts/SEnumVal \
 					scripts/StdInParse4 \
 					scripts/StdInParse5 \
+					scripts/StdInParse6 \
 					scripts/StdInParse7
