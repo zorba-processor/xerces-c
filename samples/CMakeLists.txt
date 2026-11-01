@@ -41,6 +41,8 @@ set(EXTRA_DIST
   data/nan-facets.xsd
   data/length-facets.xml
   data/length-facets.xsd
+  data/choice-empty-sequence.xml
+  data/choice-empty-sequence.xsd
   data/redirect.dtd
   data/long.xml
   )
@@ -199,6 +201,7 @@ add_xerces_sample_test(StdInParse2       COMMAND StdInParse -v=never STDIN perso
 add_xerces_sample_test(StdInParse3       COMMAND StdInParse STDIN personal-schema.xml)
 add_xerces_sample_test(StdInParse4       COMMAND StdInParse -n -s STDIN nan-facets.xml EXPECT_FAIL)
 add_xerces_sample_test(StdInParse5       COMMAND StdInParse -n -s STDIN length-facets.xml EXPECT_FAIL)
+add_xerces_sample_test(StdInParse6       COMMAND StdInParse -n -s -f STDIN choice-empty-sequence.xml EXPECT_FAIL)
 add_xerces_sample_test(PParse            COMMAND PParse EXPECT_FAIL)
 add_xerces_sample_test(PParse1           COMMAND PParse       personal.xml)
 add_xerces_sample_test(PParse2           COMMAND PParse -n -s personal-schema.xml)

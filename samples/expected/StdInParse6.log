@@ -1,0 +1,2 @@
+
+Error at (file stdin, line 12, char 5): element 'd' is not allowed for content model '(foo)'
